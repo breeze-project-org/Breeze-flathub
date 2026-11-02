@@ -68,6 +68,10 @@ jobs:
           set -euo pipefail
           mkdir -p pages/repo
           cd pages
+          if [ ! -f repo/config ]; then
+            rm -rf repo
+            ostree init --mode=archive-z2 --repo=repo
+          fi
           gh release download "$TAG" --repo "$UPSTREAM_REPO" --pattern "breeze-*.flatpak" --clobber
           BUNDLE="$(ls breeze-*.flatpak | head -n 1)"
           flatpak build-import-bundle repo "$BUNDLE"
