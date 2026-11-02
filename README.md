@@ -5,13 +5,13 @@
 > 现状：Breeze Release 只提供单文件 `breeze-*.flatpak`，手动 `flatpak install` 装完后与源无关联，`flatpak update` 永远收不到更新。本仓库把每个 Release 的 bundle 导入为 ostree 仓库，通过 GitHub Pages 对外提供，解决更新通道问题。
 
 - 应用 ID：`io.github.windy.breeze`
-- 源地址：`https://deretame.github.io/flathub/repo/`
+- 源地址：`https://deretame.github.io/Breeze-flathub/repo/`
 - 同步策略：每天定时检查 [Breeze Release](https://github.com/deretame/Breeze/releases)，有新版自动导入（见 `.github/workflows/sync.yml`，也可手动触发并指定版本号）
 
 ## 一键安装
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/deretame/flathub/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/deretame/Breeze-flathub/main/install.sh | bash
 ```
 
 ## 手动安装
@@ -19,7 +19,7 @@ curl -fsSL https://raw.githubusercontent.com/deretame/flathub/main/install.sh | 
 ```bash
 # 1. 添加软件源（只需一次）
 flatpak remote-add --user --if-not-exists breeze \
-  https://raw.githubusercontent.com/deretame/flathub/main/breeze.flatpakrepo
+  https://raw.githubusercontent.com/deretame/Breeze-flathub/main/breeze.flatpakrepo
 
 # 2. 安装 Breeze
 flatpak install --user -y breeze io.github.windy.breeze

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 REMOTE_NAME="${BREEZE_REMOTE:-breeze}"
-FLATPAKREPO_URL="${BREEZE_FLATPAKREPO_URL:-https://raw.githubusercontent.com/deretame/flathub/main/breeze.flatpakrepo}"
+FLATPAKREPO_URL="${BREEZE_FLATPAKREPO_URL:-https://raw.githubusercontent.com/deretame/Breeze-flathub/main/breeze.flatpakrepo}"
 APP_ID="${BREEZE_APP_ID:-io.github.windy.breeze}"
 
 if ! command -v flatpak >/dev/null 2>&1; then
