@@ -34,7 +34,7 @@ jobs:
         continue-on-error: true
 
       - name: Install flatpak tooling
-        run: sudo apt-get update && sudo apt-get install -y flatpak
+        run: sudo apt-get update && sudo apt-get install -y flatpak ostree
 
       - name: Resolve version to import
         id: ver
