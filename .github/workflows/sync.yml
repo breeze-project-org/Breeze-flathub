@@ -94,7 +94,5 @@ jobs:
             git fetch origin main:refs/remotes/origin/main || true
           fi
           git add -A
-          git -c user.name "github-actions[bot]" \
-            -c user.email "41898282+github-actions[bot]@users.noreply.github.com" \
-            commit -m "Sync Breeze $TAG flatpak bundle" || exit 0
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Sync Breeze $TAG flatpak bundle" || exit 0
           git push origin HEAD:gh-pages
