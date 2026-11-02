@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Breeze Flatpak 一键安装：添加软件源并安装/更新到最新版。
 # 改动脚本时把 INSTALLER_VERSION +1，用户可凭此确认跑的不是 CDN 旧缓存。
-INSTALLER_VERSION=3
+INSTALLER_VERSION=4
 set -euo pipefail
 echo "Breeze installer v$INSTALLER_VERSION"
 
@@ -18,12 +18,12 @@ if ! command -v flatpak >/dev/null 2>&1; then
 fi
 
 if flatpak remotes --user --columns=name | grep -qx "$FLATHUB_REMOTE"; then
-  flatpak remote-modify --user --no-filter "$FLATHUB_REMOTE"
+  flatpak remote-modify --user --no-filter "$FLATHUB_REMOTE" </dev/null
 else
-  flatpak remote-add --user "$FLATHUB_REMOTE" "$FLATHUB_URL"
+  flatpak remote-add --user "$FLATHUB_REMOTE" "$FLATHUB_URL" </dev/null
 fi
-flatpak remote-add --user --if-not-exists "$REMOTE_NAME" "$FLATPAKREPO_URL"
-flatpak install --user -y "$FLATHUB_REMOTE" "$RUNTIME"
-flatpak install --user -y "$REMOTE_NAME" "$APP_ID"
+flatpak remote-add --user --if-not-exists "$REMOTE_NAME" "$FLATPAKREPO_URL" </dev/null
+flatpak install --user -y "$FLATHUB_REMOTE" "$RUNTIME" </dev/null
+flatpak install --user -y "$REMOTE_NAME" "$APP_ID" </dev/null
 
 echo "安装完成，运行：flatpak run $APP_ID"
