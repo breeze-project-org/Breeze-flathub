@@ -1,0 +1,96 @@
+name: Sync Breeze Flatpak bundle to ostree repo
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Breeze tag to import (e.g. v3.0.37). Empty = latest release."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+env:
+  APP_ID: io.github.windy.breeze
+  UPSTREAM_REPO: deretame/Breeze
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v5
+        with:
+          path: main
+
+      - name: Checkout gh-pages branch (ostree repo storage)
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          path: pages
+        continue-on-error: true
+
+      - name: Install flatpak tooling
+        run: sudo apt-get update && sudo apt-get install -y flatpak
+
+      - name: Resolve version to import
+        id: ver
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          if [ -n "$INPUT_VERSION" ]; then
+            TAG="$INPUT_VERSION"
+          else
+            TAG="$(gh release view --repo "$UPSTREAM_REPO" --json tagName -q .tagName)"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if [ -f pages/VERSION ] && [ "$(cat pages/VERSION)" = "$TAG" ]; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Skip if already imported
+        if: steps.ver.outputs.already == 'true'
+        run: echo "Already at ${{ steps.ver.outputs.tag }}, nothing to do."
+
+      - name: Download bundle and import into ostree repo
+        if: steps.ver.outputs.already != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.ver.outputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p pages/repo
+          cd pages
+          gh release download "$TAG" --repo "$UPSTREAM_REPO" --pattern "breeze-*.flatpak" --clobber
+          BUNDLE="$(ls breeze-*.flatpak | head -n 1)"
+          flatpak build-import-bundle repo "$BUNDLE"
+          rm -f "$BUNDLE"
+          flatpak build-update-repo --generate-static-deltas repo
+          printf '%s' "$TAG" > VERSION
+          touch .nojekyll
+          cp "$GITHUB_WORKSPACE/main/breeze.flatpakrepo" ./breeze.flatpakrepo
+
+      - name: Commit and push to gh-pages
+        if: steps.ver.outputs.already != 'true'
+        env:
+          TAG: ${{ steps.ver.outputs.tag }}
+        run: |
+          set -euo pipefail
+          cd pages
+          if [ ! -d .git ]; then
+            git init -b gh-pages
+            git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+            git fetch origin main:refs/remotes/origin/main || true
+          fi
+          git add -A
+          git -c user.name "github-actions[bot]" \
+            -c user.email "41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Sync Breeze $TAG flatpak bundle" || exit 0
+          git push origin HEAD:gh-pages
