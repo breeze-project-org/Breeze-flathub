@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Breeze Flatpak 一键安装：添加软件源并安装/更新到最新版。
+# 改动脚本时把 INSTALLER_VERSION +1，用户可凭此确认跑的不是 CDN 旧缓存。
+INSTALLER_VERSION=3
 set -euo pipefail
+echo "Breeze installer v$INSTALLER_VERSION"
 
 REMOTE_NAME="${BREEZE_REMOTE:-breeze}"
 FLATHUB_REMOTE="${BREEZE_FLATHUB_REMOTE:-flathub-upstream}"
