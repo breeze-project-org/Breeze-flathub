@@ -3,6 +3,8 @@
 set -euo pipefail
 
 REMOTE_NAME="${BREEZE_REMOTE:-breeze}"
+FLATHUB_REMOTE="${BREEZE_FLATHUB_REMOTE:-flathub}"
+FLATHUB_URL="${BREEZE_FLATHUB_URL:-https://dl.flathub.org/repo/flathub.flatpakrepo}"
 FLATPAKREPO_URL="${BREEZE_FLATPAKREPO_URL:-https://raw.githubusercontent.com/deretame/Breeze-flathub/main/breeze.flatpakrepo}"
 APP_ID="${BREEZE_APP_ID:-io.github.windy.breeze}"
 
@@ -11,6 +13,7 @@ if ! command -v flatpak >/dev/null 2>&1; then
   exit 1
 fi
 
+flatpak remote-add --user --if-not-exists "$FLATHUB_REMOTE" "$FLATHUB_URL"
 flatpak remote-add --user --if-not-exists "$REMOTE_NAME" "$FLATPAKREPO_URL"
 flatpak install --user -y "$REMOTE_NAME" "$APP_ID"
 
