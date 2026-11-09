@@ -27,8 +27,8 @@ fi
 flatpak remote-add --user --if-not-exists "$REMOTE_NAME" "$FLATPAKREPO_URL" </dev/null
 
 # 仓库迁移：旧 GitHub Pages 地址已失效，自动把老用户已有的源修正到新地址。
-CURRENT_REPO_URL="$(flatpak remotes --user --columns=name,url | awk -v n="$REMOTE_NAME" '$1 == n { print $2 }')"
-if [ "$CURRENT_REPO_URL" = "$LEGACY_REPO_URL" ]; then
+CURRENT_REPO_URL="$(flatpak remotes --user --columns=name,url | awk -v n="$REMOTE_NAME" '$1 == n { print $2 }')" || CURRENT_REPO_URL=""
+if [ "${CURRENT_REPO_URL%/}" = "${LEGACY_REPO_URL%/}" ]; then
   echo "检测到旧软件源地址，迁移到 $REPO_URL"
   flatpak remote-modify --user --url="$REPO_URL" "$REMOTE_NAME" </dev/null
 fi
