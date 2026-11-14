@@ -6,7 +6,7 @@
 
 - 应用 ID：`io.github.windy.breeze`
 - 源地址：`https://breeze-project-org.github.io/Breeze-flathub/repo/`
-- 同步策略：每天定时检查 [Breeze Release](https://github.com/deretame/Breeze/releases)，有新版自动导入（见 `.github/workflows/sync.yml`，也可手动触发并指定版本号）
+- 同步策略：每天定时检查 [Breeze Release](https://github.com/breeze-project-org/Breeze/releases)，有新版自动导入（见 `.github/workflows/sync.yml`，也可手动触发并指定版本号）
 
 ## 一键安装
 
