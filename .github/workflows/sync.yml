@@ -72,6 +72,9 @@ jobs:
             rm -rf repo
             ostree init --mode=archive-z2 --repo=repo
           fi
+          # git 不跟踪空目录，gh-pages 回签出的 ostree 仓库会丢掉 refs/remotes，
+          # 导致 build-update-repo --generate-static-deltas 报 opendir(refs/remotes)
+          mkdir -p repo/refs/remotes
           gh release download "$TAG" --repo "$UPSTREAM_REPO" --pattern "breeze-*.flatpak" --clobber
           BUNDLE="$(ls breeze-*.flatpak | head -n 1)"
           flatpak build-import-bundle repo "$BUNDLE"
